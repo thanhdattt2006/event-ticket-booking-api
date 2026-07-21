@@ -107,37 +107,36 @@ BUILD SUCCESS (./mvnw test -Dtest=EntityMappingTest)
 H2 in-memory, Hibernate create-drop, Flyway disabled for this test slice
 ```
 
-**Next:** Phase 3 — Voucher Seeding
+**Next:** Phase 4 — Customer Booking Flow
 
 ---
 
-### Phase 2 — Concert & TicketCategory API (Operation side) ✅
+### Phase 3 — Voucher Seeding ✅
 
 **Completed:** 2026-07-21
 
-**Status:** DONE — all 6 test cases for ConcertService pass.
+**Status:** DONE — Seed data is available in `V2__seed_sample_data.sql`, validation API works, and 7 unit tests pass.
 
-**Files created:**
+**Files created / modified:**
 
 | File | Notes |
 |------|-------|
-| `dto/request/ConcertCreateRequest.java` | Validation constraints for Concert creation |
-| `dto/request/TicketCategoryCreateRequest.java` | Validation for price > 0, qty >= 1 |
-| `dto/response/ConcertResponse.java` | Includes list of TicketCategoryResponse |
-| `dto/response/TicketCategoryResponse.java` | Response DTO |
-| `service/ConcertService.java` | Interface for Concert operations |
-| `service/ConcertServiceImpl.java` | Implements creation, publishing (validates DRAFT status and at least 1 category), adding categories, listing all |
-| `controller/operation/ConcertOperationController.java` | Swagger annotations (`@Tag`, `@Operation`), REST endpoints |
-| `service/ConcertServiceImplTest.java` | 6 unit tests with Mockito (create success/fail, publish success/fail, add category success/fail) |
-| `pom.xml` | Added `springdoc-openapi-starter-webmvc-ui` for Swagger UI |
+| `V2__seed_sample_data.sql` | Used existing seeding script which already contained 6 diverse vouchers |
+| `dto/response/VoucherValidationResponse.java` | Validation response DTO (valid flag, message, discount amount) |
+| `service/VoucherService.java` | Interface for Voucher validation |
+| `service/VoucherServiceImpl.java` | Validation logic for expiry, quota, concert restrictions, and user usage limits |
+| `controller/VoucherController.java` | REST Endpoint `GET /api/vouchers/{code}/validate` with Swagger integration |
+| `service/VoucherServiceImplTest.java` | 7 unit tests covering all voucher validation logic branches |
+| `repository/VoucherRepository.java` | Added `findByCode` for non-blocking read in validation API |
 
 **Deviations from TODO.md:**
-- TicketCategory addition is handled in `ConcertService` and `ConcertOperationController` to keep cohesive API routes.
+- Instead of a new `V2__seed_vouchers.sql`, we used the existing `V2__seed_sample_data.sql` which was already set up with comprehensive voucher data.
 
 **Verification results:**
 ```
-Tests run: 11, Failures: 0, Errors: 1
-BUILD FAILURE: BackendApplicationTests contextLoad failed due to missing Testcontainers (expected behavior when Docker is absent in assessment env). ConcertServiceImplTest 6/6 passed.
+Tests run: 7, Failures: 0, Errors: 0 in VoucherServiceImplTest
+BUILD SUCCESS
 ```
 
-**Next:** Phase 3 — Voucher Seeding (wait for user confirmation)
+**Next:** Phase 4 — Customer Booking Flow (wait for user confirmation)
+

@@ -63,12 +63,12 @@ verifiable through Postman/Swagger UI.
 
 ## Phase 3: Voucher Seeding (no full CRUD needed, per locked scope)
 
-- [ ] Write Flyway migration `V2__seed_vouchers.sql` — seed sample data (3-5 vouchers
+- [x] Write Flyway migration `V2__seed_vouchers.sql` — seed sample data (3-5 vouchers
       of different types: PERCENTAGE, FIXED_AMOUNT, with varying max_usage limits for
-      easy testing)
-- [ ] `GET /api/vouchers/{code}/validate` — API to check if a voucher is still usable
+      easy testing) (Implemented in V2__seed_sample_data.sql)
+- [x] `GET /api/vouchers/{code}/validate` — API to check if a voucher is still usable
       (NO POST/PUT/DELETE for vouchers — matches the scope limitation already documented)
-- [ ] Unit tests for validation logic (still valid, still has quota, hasn't exceeded
+- [x] Unit tests for validation logic (still valid, still has quota, hasn't exceeded
       per-user limit)
 
 **Expected output:** vouchers exist in the DB via seeding, the validate API works.
