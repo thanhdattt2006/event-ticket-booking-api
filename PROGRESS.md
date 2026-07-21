@@ -142,15 +142,15 @@ Tests run: 7, Failures: 0, Errors: 0 in VoucherServiceImplTest
 BUILD SUCCESS
 ```
 
-**Next:** Phase 4 — Customer Booking Flow (Steps 4.5 to 4.7)
+**Next:** Phase 5 — Concurrency Integration Tests
 
 ---
 
-### Phase 4 (Part 1: Steps 4.1 to 4.4) — Customer Booking Flow (Core Logic) ✅
+### Phase 4 — Customer Booking Flow (Core Logic) ✅
 
 **Completed:** 2026-07-21
 
-**Status:** DONE — 4.1 to 4.4 core booking logic is implemented (including 4.5 for data integrity) and 5 unit tests pass.
+**Status:** DONE — 4.1 to 4.7 complete. Full booking flow and retrieval endpoints are operational. 7 unit tests pass.
 
 **Files created / modified:**
 
@@ -158,18 +158,17 @@ BUILD SUCCESS
 |------|-------|
 | `dto/request/BookingCreateRequest.java` | Booking payload DTO with validation annotations |
 | `dto/request/BookingItemRequest.java` | TicketCategory + Quantity payload DTO |
-| `dto/response/BookingResponse.java` | Response containing ID, idempotency key, amount, etc. |
-| `service/BookingService.java` | Interface for Booking API |
-| `service/BookingServiceImpl.java` | Contains all concurrency logic: Idempotency early return (4.2), Input validation (4.1), Category sorting + Atomic reserve (4.3), Voucher pessimistic lock application (4.4), and saving entities (4.5) in one Transaction. |
-| `controller/BookingController.java` | `POST /api/bookings` with Swagger annotations |
-| `service/BookingServiceImplTest.java` | 5 unit tests verifying all logic paths, including sorting order and exception throwing |
+| `dto/response/BookingResponse.java` | Response containing ID, bookingCode, idempotency key, amount, etc. |
+| `service/BookingService.java` | Interface for Booking API (`createBooking`, `getBookingByCode`, `getUserBookings`) |
+| `service/BookingServiceImpl.java` | Contains concurrency logic (4.1-4.4), entity persistence and code generation (4.5), and query methods for booking code (4.6) and user history (4.7). |
+| `controller/BookingController.java` | `POST /api/bookings`, `GET /api/bookings/{bookingCode}`, `GET /api/bookings` endpoints |
+| `service/BookingServiceImplTest.java` | 7 unit tests covering create and retrieval logic |
 
 **Deviations from TODO.md:**
-- Although requested to only implement 4.1 to 4.4, step 4.5 (saving the entities) had to be implemented simultaneously inside the `@Transactional` method to maintain logical consistency (so that tickets are not deducted without a corresponding booking record being generated). The TODO checklist was strictly updated only up to 4.4 as instructed.
-- For Idempotency (4.2), if a previous booking is found, the method uses an early return instead of throwing an exception.
+- None. `bookingCode` was added to `BookingResponse` since it's required by `schema.sql` and the retrieval API. Idempotency uses an early return.
 
 **Verification results:**
 ```
-Tests run: 5, Failures: 0, Errors: 0 in BookingServiceImplTest
+Tests run: 7, Failures: 0, Errors: 0 in BookingServiceImplTest
 BUILD SUCCESS
 ```

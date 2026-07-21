@@ -11,12 +11,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -129,7 +133,9 @@ public class BookingServiceImpl implements BookingService {
         }
 
         // [4.5] Save Booking and Items
+        String generatedCode = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         Booking booking = new Booking();
+        booking.setBookingCode(generatedCode);
         booking.setUser(user);
         booking.setConcert(concert);
         booking.setVoucher(appliedVoucher);
@@ -163,6 +169,7 @@ public class BookingServiceImpl implements BookingService {
     private BookingResponse mapToResponse(Booking booking) {
         return BookingResponse.builder()
                 .id(booking.getId())
+                .bookingCode(booking.getBookingCode())
                 .status(booking.getStatus())
                 .totalAmount(booking.getTotalAmount())
                 .discountAmount(booking.getDiscountAmount())
@@ -170,5 +177,20 @@ public class BookingServiceImpl implements BookingService {
                 .expiresAt(booking.getExpiresAt())
                 .createdAt(booking.getCreatedAt())
                 .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BookingResponse getBookingByCode(String bookingCode) {
+        Booking booking = bookingRepository.findByBookingCode(bookingCode)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+        return mapToResponse(booking);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<BookingResponse> getUserBookings(Long userId, Pageable pageable) {
+        return bookingRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable)
+                .map(this::mapToResponse);
     }
 }

@@ -85,10 +85,10 @@ Break this into small steps, do not write the entire BookingService in one pass:
 - [x] 4.3: Implement atomic reserve for each booking_item (sort by category_id before
       looping, per AGENTS.md section 2.3)
 - [x] 4.4: Implement voucher application (if any) — use pessimistic lock + redemption check
-- [ ] 4.5: Implement creating the booking + booking_items in a single transaction, set
+- [x] 4.5: Implement creating the booking + booking_items in a single transaction, set
       expires_at (suggested: 10 minutes from reserved_at)
-- [ ] 4.6: `GET /api/bookings/{bookingCode}` — view booking detail + status
-- [ ] 4.7: `GET /api/bookings?userId=` — a user's booking history (uses idx_user_history)
+- [x] 4.6: `GET /api/bookings/{bookingCode}` — view booking detail + status
+- [x] 4.7: `GET /api/bookings?userId=` — a user's booking history (uses idx_user_history)
 
 **Expected output:** the end-to-end booking flow works via Postman, a single successful
 request can be manually verified.

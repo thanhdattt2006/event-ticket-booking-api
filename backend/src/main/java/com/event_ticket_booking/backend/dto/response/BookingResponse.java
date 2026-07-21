@@ -12,6 +12,7 @@ import java.util.List;
 @Builder
 public class BookingResponse {
     private Long id;
+    private String bookingCode;
     private Booking.Status status;
     private BigDecimal totalAmount;
     private BigDecimal discountAmount;

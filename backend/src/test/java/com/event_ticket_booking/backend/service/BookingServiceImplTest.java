@@ -13,6 +13,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -188,5 +193,38 @@ class BookingServiceImplTest {
 
         verify(voucherRepository).incrementUsedCount(5L);
         verify(voucherRedemptionRepository).save(any(VoucherRedemption.class));
+    }
+
+    @Test
+    void getBookingByCode_Success() {
+        Booking booking = new Booking();
+        booking.setId(100L);
+        booking.setBookingCode("ABCDEFGH");
+        booking.setStatus(Booking.Status.PENDING);
+        
+        when(bookingRepository.findByBookingCode("ABCDEFGH")).thenReturn(Optional.of(booking));
+        
+        BookingResponse response = bookingService.getBookingByCode("ABCDEFGH");
+        
+        assertEquals(100L, response.getId());
+        assertEquals("ABCDEFGH", response.getBookingCode());
+    }
+    
+    @Test
+    void getUserBookings_Success() {
+        Booking booking = new Booking();
+        booking.setId(100L);
+        booking.setBookingCode("XYZ");
+        booking.setStatus(Booking.Status.PENDING);
+        
+        Page<Booking> page = new PageImpl<>(List.of(booking));
+        Pageable pageable = PageRequest.of(0, 10);
+        
+        when(bookingRepository.findByUserIdOrderByCreatedAtDesc(1L, pageable)).thenReturn(page);
+        
+        Page<BookingResponse> response = bookingService.getUserBookings(1L, pageable);
+        
+        assertEquals(1, response.getTotalElements());
+        assertEquals("XYZ", response.getContent().get(0).getBookingCode());
     }
 }
