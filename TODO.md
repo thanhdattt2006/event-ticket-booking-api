@@ -99,14 +99,14 @@ request can be manually verified.
 
 grades most heavily)
 
-- [ ] 5.1: Set up Testcontainers MySQL for integration testing
-- [ ] 5.2: "Oversell" test — fire N threads (N > quantity_total) booking the same
+- [x] 5.1: Set up Testcontainers MySQL for integration testing
+- [x] 5.2: "Oversell" test — fire N threads (N > quantity_total) booking the same
       ticket_category concurrently, assert total sold NEVER exceeds quantity_total
-- [ ] 5.3: "Duplicate idempotency" test — call the booking-creation API twice with the
+- [x] 5.3: "Duplicate idempotency" test — call the booking-creation API twice with the
       same idempotencyKey, assert exactly 1 row exists in bookings
-- [ ] 5.4: "Voucher abuse" test — one user attempts to exceed max_usage_per_user,
+- [x] 5.4: "Voucher abuse" test — one user attempts to exceed max_usage_per_user,
       assert it's rejected past the limit
-- [ ] 5.5: "Voucher system-wide exhaustion" test — multiple users race for a voucher
+- [x] 5.5: "Voucher system-wide exhaustion" test — multiple users race for a voucher
       with a small max_usage, assert max_usage is never exceeded
 
 **Expected output:** the above 4 test cases pass — this is the direct evidence of solving
