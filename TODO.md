@@ -10,19 +10,19 @@ that doesn't compile.
 
 ## Phase 0: Project Setup (foundation, no business logic yet)
 
-- [ ] The Spring Boot project skeleton is already generated manually via start.spring.io
+- [x] The Spring Boot project skeleton is already generated manually via start.spring.io
       (Maven, Java 17, Spring Boot 4.0.7, dependencies: Web, Data JPA, MySQL Driver,
       Validation, Lombok) and placed in this folder. DO NOT regenerate or overwrite it —
       just verify it builds (`./mvnw clean install`).
-- [ ] Configure `application.yml` with 2 profiles: `local` (real MySQL) and `test`
+- [x] Configure `application.yml` with 2 profiles: `local` (real MySQL) and `test`
       (Testcontainers)
-- [ ] Set up the package structure per AGENTS.md section 5
-- [ ] Set up the standard `ApiResponse<T>` wrapper for all responses
-- [ ] Set up `GlobalExceptionHandler` (`@RestControllerAdvice`) with base exceptions:
+- [x] Set up the package structure per AGENTS.md section 5
+- [x] Set up the standard `ApiResponse<T>` wrapper for all responses
+- [x] Set up `GlobalExceptionHandler` (`@RestControllerAdvice`) with base exceptions:
       `ResourceNotFoundException`, `BusinessException`, `ValidationException`
-- [ ] Run `schema.sql` against local MySQL, confirm tables are created correctly
-- [ ] Set up Flyway to version the schema — copy schema.sql into migration V1
-- [ ] Write the README "How to run locally" section (docker-compose for MySQL if needed)
+- [x] Run `schema.sql` against local MySQL, confirm tables are created correctly
+- [x] Set up Flyway to version the schema — copy schema.sql into migration V1
+- [x] Write the README "How to run locally" section (docker-compose for MySQL if needed)
 
 **Expected output:** the project runs via `./mvnw spring-boot:run`, connects to MySQL
 successfully. No APIs needed yet.
@@ -31,14 +31,14 @@ successfully. No APIs needed yet.
 
 ## Phase 1: Entity + Repository Layer
 
-- [ ] Create 8 entities matching the 8 tables in schema.sql (map column names exactly
+- [x] Create 8 entities matching the 8 tables in schema.sql (map column names exactly
       via `@Column`)
-- [ ] Create a Repository interface for each entity (`extends JpaRepository`)
-- [ ] Implement `TicketCategoryRepository.reserveTickets()` — native/JPQL update per
+- [x] Create a Repository interface for each entity (`extends JpaRepository`)
+- [x] Implement `TicketCategoryRepository.reserveTickets()` — native/JPQL update per
       AGENTS.md section 2.1
-- [ ] Implement `VoucherRepository.findByCodeForUpdate()` — pessimistic lock per
+- [x] Implement `VoucherRepository.findByCodeForUpdate()` — pessimistic lock per
       AGENTS.md section 2.2
-- [ ] Light unit test: load context, confirm entity mapping has no errors (`@DataJpaTest`)
+- [x] Light unit test: load context, confirm entity mapping has no errors (`@DataJpaTest`)
 
 **Expected output:** all entities + repositories compile, context-load test passes.
 

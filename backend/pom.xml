@@ -82,6 +82,20 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- @DataJpaTest — Spring Boot 4.x moved this to its own module with new package -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- H2 in-memory DB for @DataJpaTest — no Docker needed for unit-level entity tests -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- Testcontainers — integration tests against real MySQL (Phase 5) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
