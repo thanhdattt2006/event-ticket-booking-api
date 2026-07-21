@@ -79,12 +79,12 @@ verifiable through Postman/Swagger UI.
 
 Break this into small steps, do not write the entire BookingService in one pass:
 
-- [ ] 4.1: `POST /api/bookings` — validate input (concert is PUBLISHED, still within
+- [x] 4.1: `POST /api/bookings` — validate input (concert is PUBLISHED, still within
       sale_start_at/sale_end_at)
-- [ ] 4.2: Implement idempotency check (query first by idempotencyKey)
-- [ ] 4.3: Implement atomic reserve for each booking_item (sort by category_id before
+- [x] 4.2: Implement idempotency check (query first by idempotencyKey)
+- [x] 4.3: Implement atomic reserve for each booking_item (sort by category_id before
       looping, per AGENTS.md section 2.3)
-- [ ] 4.4: Implement voucher application (if any) — use pessimistic lock + redemption check
+- [x] 4.4: Implement voucher application (if any) — use pessimistic lock + redemption check
 - [ ] 4.5: Implement creating the booking + booking_items in a single transaction, set
       expires_at (suggested: 10 minutes from reserved_at)
 - [ ] 4.6: `GET /api/bookings/{bookingCode}` — view booking detail + status

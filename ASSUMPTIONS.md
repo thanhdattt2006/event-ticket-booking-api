@@ -16,7 +16,10 @@ forgotten that way).
 
 ## Done
 
-- [ ] (list per completed phase in TODO.md)
+- [x] Phase 0: Project Setup
+- [x] Phase 1: Entity + Repository Layer
+- [x] Phase 2: Concert & TicketCategory API
+- [x] Phase 3: Voucher Seeding
 
 ## Not Done (Out of scope, intentionally)
 
