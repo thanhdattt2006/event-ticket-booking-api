@@ -48,13 +48,13 @@ successfully. No APIs needed yet.
 
 Build the operation side first since the customer side depends on already-published data.
 
-- [ ] `POST /api/operation/concerts` — create a concert (default status DRAFT)
-- [ ] `PATCH /api/operation/concerts/{id}/publish` — transition DRAFT → PUBLISHED
-- [ ] `POST /api/operation/concerts/{id}/ticket-categories` — add a ticket category
+- [x] `POST /api/operation/concerts` — create a concert (default status DRAFT)
+- [x] `PATCH /api/operation/concerts/{id}/publish` — transition DRAFT → PUBLISHED
+- [x] `POST /api/operation/concerts/{id}/ticket-categories` — add a ticket category
       to a concert
-- [ ] `GET /api/operation/concerts` — list all (including DRAFT) for operator view
-- [ ] Unit tests for ConcertService, TicketCategoryService (mock repository)
-- [ ] Add Swagger annotations to the above endpoints
+- [x] `GET /api/operation/concerts` — list all (including DRAFT) for operator view
+- [x] Unit tests for ConcertService, TicketCategoryService (mock repository)
+- [x] Add Swagger annotations to the above endpoints
 
 **Expected output:** an operator can create a concert + ticket category via API,
 verifiable through Postman/Swagger UI.
