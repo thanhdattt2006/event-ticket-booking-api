@@ -1,0 +1,19 @@
+# ─── OS / Editor ───────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.iml
+
+# ─── Java / Maven ──────────────────────────────────────────────
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+
+# ─── Environment / Secrets ─────────────────────────────────────
+# Never commit real credentials
+.env
+*.env.local
+
+# ─── Docker ────────────────────────────────────────────────────
+# Docker volumes are local only
+backend/mysql_data/

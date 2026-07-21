@@ -1,0 +1,75 @@
+spring:
+  application:
+    name: event-ticket-booking-api
+
+  # JPA/Hibernate — column names mapped explicitly via @Column so physical strategy is irrelevant
+  jpa:
+    open-in-view: false   # disable OSIV — keeps transactions within service layer only
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: false       # flip to true locally if you need to debug a query
+
+  # Flyway — auto-runs on startup; location matches the folder we created
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: false
+
+# HikariCP connection pool — sized for the expected flash-sale load (~300-500 req/min)
+  datasource:
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000   # 30 s — fail fast rather than queue indefinitely
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+server:
+  port: 8080
+
+---
+# ──────────────────────────────────────────────────────────────
+# Profile: local  —  real MySQL running via docker-compose
+# Activate with: -Dspring.profiles.active=local  (or set in IDE)
+# ──────────────────────────────────────────────────────────────
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/concert_booking?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh
+    username: appuser
+    password: apppassword
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate   # schema is owned by Flyway; Hibernate only validates
+
+logging:
+  level:
+    com.event_ticket_booking: DEBUG
+    org.flywaydb: INFO
+
+---
+# ──────────────────────────────────────────────────────────────
+# Profile: test  —  Testcontainers spins up a real MySQL container
+# Datasource URL is overridden by @DynamicPropertySource in test classes (Phase 5)
+# ──────────────────────────────────────────────────────────────
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+  flyway:
+    enabled: true   # Flyway still runs migrations inside the container
+
+logging:
+  level:
+    com.event_ticket_booking: INFO
