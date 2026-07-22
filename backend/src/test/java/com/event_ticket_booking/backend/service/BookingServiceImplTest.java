@@ -31,13 +31,20 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class BookingServiceImplTest {
 
-    @Mock private BookingRepository bookingRepository;
-    @Mock private BookingItemRepository bookingItemRepository;
-    @Mock private ConcertRepository concertRepository;
-    @Mock private TicketCategoryRepository ticketCategoryRepository;
-    @Mock private VoucherRepository voucherRepository;
-    @Mock private VoucherRedemptionRepository voucherRedemptionRepository;
-    @Mock private UserRepository userRepository;
+    @Mock
+    private BookingRepository bookingRepository;
+    @Mock
+    private BookingItemRepository bookingItemRepository;
+    @Mock
+    private ConcertRepository concertRepository;
+    @Mock
+    private TicketCategoryRepository ticketCategoryRepository;
+    @Mock
+    private VoucherRepository voucherRepository;
+    @Mock
+    private VoucherRedemptionRepository voucherRedemptionRepository;
+    @Mock
+    private UserRepository userRepository;
 
     @InjectMocks
     private BookingServiceImpl bookingService;
@@ -102,7 +109,7 @@ class BookingServiceImplTest {
     @Test
     void createBooking_InvalidConcertStatus() {
         when(bookingRepository.findByIdempotencyKey(any())).thenReturn(Optional.empty());
-        
+
         concert.setStatus(Concert.Status.DRAFT);
         when(concertRepository.findById(100L)).thenReturn(Optional.of(concert));
 
@@ -147,7 +154,7 @@ class BookingServiceImplTest {
         assertNotNull(response);
         assertEquals(new BigDecimal("500"), response.getTotalAmount()); // 1*100 + 2*200
         assertEquals(new BigDecimal("0"), response.getDiscountAmount());
-        
+
         // Verify order of reservation (10L first, then 20L)
         org.mockito.InOrder inOrder = inOrder(ticketCategoryRepository);
         inOrder.verify(ticketCategoryRepository).reserveTickets(10L, 1);
@@ -201,29 +208,30 @@ class BookingServiceImplTest {
         booking.setId(100L);
         booking.setBookingCode("ABCDEFGH");
         booking.setStatus(Booking.Status.PENDING);
-        
+        booking.setReservedAt(LocalDateTime.now());
+
         when(bookingRepository.findByBookingCode("ABCDEFGH")).thenReturn(Optional.of(booking));
-        
+
         BookingResponse response = bookingService.getBookingByCode("ABCDEFGH");
-        
+
         assertEquals(100L, response.getId());
         assertEquals("ABCDEFGH", response.getBookingCode());
     }
-    
+
     @Test
     void getUserBookings_Success() {
         Booking booking = new Booking();
         booking.setId(100L);
         booking.setBookingCode("XYZ");
         booking.setStatus(Booking.Status.PENDING);
-        
+
         Page<Booking> page = new PageImpl<>(List.of(booking));
         Pageable pageable = PageRequest.of(0, 10);
-        
+
         when(bookingRepository.findByUserIdOrderByCreatedAtDesc(1L, pageable)).thenReturn(page);
-        
+
         Page<BookingResponse> response = bookingService.getUserBookings(1L, pageable);
-        
+
         assertEquals(1, response.getTotalElements());
         assertEquals("XYZ", response.getContent().get(0).getBookingCode());
     }

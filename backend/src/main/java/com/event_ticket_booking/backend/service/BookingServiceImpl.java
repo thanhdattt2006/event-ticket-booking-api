@@ -9,6 +9,7 @@ import com.event_ticket_booking.backend.exception.ResourceNotFoundException;
 import com.event_ticket_booking.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.data.domain.Page;
@@ -35,10 +36,11 @@ public class BookingServiceImpl implements BookingService {
     private final UserRepository userRepository;
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public BookingResponse createBooking(Long userId, BookingCreateRequest request) {
         // [4.2] Idempotency Check
-        java.util.Optional<Booking> existingBooking = bookingRepository.findByIdempotencyKey(request.getIdempotencyKey());
+        java.util.Optional<Booking> existingBooking = bookingRepository
+                .findByIdempotencyKey(request.getIdempotencyKey());
         if (existingBooking.isPresent()) {
             return mapToResponse(existingBooking.get());
         }
@@ -77,17 +79,18 @@ public class BookingServiceImpl implements BookingService {
 
             int affectedRows = ticketCategoryRepository.reserveTickets(category.getId(), itemReq.getQuantity());
             if (affectedRows == 0) {
-                throw new BusinessException("InsufficientTicketException: Ticket category " + category.getName() + " sold out or not enough quantity");
+                throw new BusinessException("InsufficientTicketException: Ticket category " + category.getName()
+                        + " sold out or not enough quantity");
             }
 
             BookingItem item = new BookingItem();
             item.setTicketCategory(category);
             item.setQuantity(itemReq.getQuantity());
             item.setUnitPrice(category.getPrice()); // Snapshot price
-            
+
             BigDecimal subtotal = category.getPrice().multiply(new BigDecimal(itemReq.getQuantity()));
             item.setSubtotal(subtotal);
-            
+
             totalAmount = totalAmount.add(subtotal);
             bookingItems.add(item);
         }
@@ -135,6 +138,7 @@ public class BookingServiceImpl implements BookingService {
         // [4.5] Save Booking and Items
         String generatedCode = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         Booking booking = new Booking();
+        booking.setReservedAt(LocalDateTime.now());
         booking.setBookingCode(generatedCode);
         booking.setUser(user);
         booking.setConcert(concert);
