@@ -42,6 +42,9 @@ public class Booking {
     @Column(name = "status", nullable = false)
     private Status status = Status.PENDING;
 
+    @Column(name = "is_suspicious", nullable = false)
+    private boolean isSuspicious = false;
+
     @Column(name = "total_amount", nullable = false, precision = 12, scale = 2)
     private BigDecimal totalAmount;
 

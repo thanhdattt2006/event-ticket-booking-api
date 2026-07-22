@@ -26,6 +26,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     // Operation dashboard filter — uses idx_status_created(status, created_at)
     Page<Booking> findByStatusOrderByCreatedAtDesc(Booking.Status status, Pageable pageable);
 
+    Page<Booking> findByStatus(Booking.Status status, Pageable pageable);
+
     @Modifying
     @Query("UPDATE Booking b SET b.status = 'PAID', b.updatedAt = :now WHERE b.bookingCode = :code AND b.status = 'PENDING'")
     int confirmPayment(@Param("code") String code, @Param("now") LocalDateTime now);
