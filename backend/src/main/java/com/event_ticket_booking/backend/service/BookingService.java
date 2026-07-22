@@ -10,4 +10,7 @@ public interface BookingService {
     BookingResponse createBooking(Long userId, BookingCreateRequest request);
     BookingResponse getBookingByCode(String bookingCode);
     Page<BookingResponse> getUserBookings(Long userId, Pageable pageable);
+    void confirmPayment(String bookingCode);
+    void cancelBooking(String bookingCode);
+    void expireBooking(Long bookingId);
 }

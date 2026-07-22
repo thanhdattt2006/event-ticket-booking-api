@@ -146,6 +146,36 @@ BUILD SUCCESS
 
 ---
 
+### Phase 6 — Booking Lifecycle — Expiry Cronjob + Revert ✅
+
+**Completed:** 2026-07-23
+
+**Status:** DONE — Added cron job for booking expiry, transactional revert logic for inventory and vouchers, and atomic state transitions for cancel and confirm-payment. Integration tests for expiry and revert are passing.
+
+**Files created / modified:**
+
+| File                                          | Notes                                                                                                                                                 |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `repository/BookingRepository.java`           | Added `confirmPayment`, `cancelBooking`, and `updateStatusToExpired` atomic JPQL updates. Replaced `expireBookings` with `findExpiredPendingBookings`.|
+| `service/BookingService.java`                 | Added `confirmPayment`, `cancelBooking`, `expireBooking` method signatures.                                                                           |
+| `service/BookingServiceImpl.java`             | Implemented lifecycle methods. Added `revertInventoryAndVoucher` logic handling TicketCategory quantity release and Voucher usage decrement.          |
+| `controller/BookingController.java`           | Created `PATCH /api/bookings/{bookingCode}/confirm-payment` and `PATCH /api/bookings/{bookingCode}/cancel` endpoints.                                 |
+| `scheduler/BookingCronJob.java`               | Created `@Scheduled` component to scan and process expired bookings one by one atomically.                                                            |
+| `BackendApplication.java`                     | Added `@EnableScheduling` to activate cron jobs.                                                                                                      |
+
+**Deviations from TODO.md:**
+
+- The `expireBookings` bulk atomic update in `BookingRepository` was modified to fetch expired bookings (`findExpiredPendingBookings`), which are then expired one-by-one (`expireBooking`) to ensure atomic state transitions before attempting to revert inventory and vouchers.
+
+**Verification results:**
+
+- Build successful (`./mvnw clean compile`).
+- Tests run: 1, Failures: 0, Errors: 0 in `BookingLifecycleConcurrencyIntegrationTest`. Test verifies atomic race condition between payment confirmation and booking expiry.
+
+**Next:** Phase 7 — Operation Dashboard APIs
+
+---
+
 ### Phase 5 — Concurrency Integration Tests ✅
 
 **Completed:** 2026-07-23

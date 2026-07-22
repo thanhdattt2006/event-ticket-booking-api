@@ -26,19 +26,19 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     // Operation dashboard filter — uses idx_status_created(status, created_at)
     Page<Booking> findByStatusOrderByCreatedAtDesc(Booking.Status status, Pageable pageable);
 
-    /**
-     * Atomic expiry — updates PENDING/AWAITING_PAYMENT bookings whose expires_at has passed.
-     * Single SQL statement avoids the race condition where a payment callback arrives at the
-     * exact moment the cronjob tries to expire the same booking (AGENTS.md §4).
-     * Uses idx_cronjob_scan(status, expires_at) — do NOT remove that index.
-     */
     @Modifying
-    @Transactional
-    @Query("UPDATE Booking b SET b.status = 'EXPIRED', b.updatedAt = :now " +
-           "WHERE b.status IN ('PENDING', 'AWAITING_PAYMENT') AND b.expiresAt < :now")
-    int expireBookings(@Param("now") LocalDateTime now);
+    @Query("UPDATE Booking b SET b.status = 'PAID', b.updatedAt = :now WHERE b.bookingCode = :code AND b.status = 'PENDING'")
+    int confirmPayment(@Param("code") String code, @Param("now") LocalDateTime now);
 
-    // Find the IDs of just-expired bookings so the revert service can process them
-    @Query("SELECT b.id FROM Booking b WHERE b.status = 'EXPIRED' AND b.updatedAt >= :since")
-    List<Long> findRecentlyExpiredIds(@Param("since") LocalDateTime since);
+    @Modifying
+    @Query("UPDATE Booking b SET b.status = 'EXPIRED', b.updatedAt = :now WHERE b.id = :id AND b.status = 'PENDING'")
+    int updateStatusToExpired(@Param("id") Long id, @Param("now") LocalDateTime now);
+
+    @Modifying
+    @Query("UPDATE Booking b SET b.status = 'CANCELLED', b.updatedAt = :now WHERE b.bookingCode = :code AND b.status = 'PENDING'")
+    int cancelBooking(@Param("code") String code, @Param("now") LocalDateTime now);
+
+    // Find pending bookings that have expired
+    @Query("SELECT b FROM Booking b WHERE b.status = 'PENDING' AND b.expiresAt < :now")
+    List<Booking> findExpiredPendingBookings(@Param("now") LocalDateTime now);
 }

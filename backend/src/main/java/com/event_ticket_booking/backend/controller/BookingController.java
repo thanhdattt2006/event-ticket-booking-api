@@ -54,4 +54,17 @@ public class BookingController {
         Page<BookingResponse> response = bookingService.getUserBookings(userId, pageable);
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
+    @PatchMapping("/{bookingCode}/confirm-payment")
+    @Operation(summary = "Confirm Payment", description = "Simulates a payment callback to transition a booking to PAID status.")
+    public ResponseEntity<ApiResponse<Void>> confirmPayment(@PathVariable String bookingCode) {
+        bookingService.confirmPayment(bookingCode);
+        return ResponseEntity.ok(ApiResponse.ok(null));
+    }
+
+    @PatchMapping("/{bookingCode}/cancel")
+    @Operation(summary = "Cancel Booking", description = "User self-cancels a booking.")
+    public ResponseEntity<ApiResponse<Void>> cancelBooking(@PathVariable String bookingCode) {
+        bookingService.cancelBooking(bookingCode);
+        return ResponseEntity.ok(ApiResponse.ok(null));
+    }
 }

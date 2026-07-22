@@ -197,4 +197,58 @@ public class BookingServiceImpl implements BookingService {
         return bookingRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable)
                 .map(this::mapToResponse);
     }
+
+    @Override
+    @Transactional
+    public void confirmPayment(String bookingCode) {
+        int updated = bookingRepository.confirmPayment(bookingCode, LocalDateTime.now());
+        if (updated == 0) {
+            throw new BusinessException("Booking not found, already processed, or not in PENDING state");
+        }
+    }
+
+    @Override
+    @Transactional
+    public void cancelBooking(String bookingCode) {
+        int updated = bookingRepository.cancelBooking(bookingCode, LocalDateTime.now());
+        if (updated == 0) {
+            throw new BusinessException("Booking not found, already processed, or not in PENDING state");
+        }
+        Booking booking = bookingRepository.findByBookingCode(bookingCode)
+                .orElseThrow(() -> new BusinessException("Booking not found"));
+        revertInventoryAndVoucher(booking);
+    }
+
+    @Override
+    @Transactional
+    public void expireBooking(Long bookingId) {
+        int updated = bookingRepository.updateStatusToExpired(bookingId, LocalDateTime.now());
+        if (updated == 0) {
+            throw new BusinessException("Booking not found or already processed");
+        }
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new BusinessException("Booking not found"));
+        revertInventoryAndVoucher(booking);
+    }
+
+    private void revertInventoryAndVoucher(Booking booking) {
+        // 1. Revert Inventory
+        List<BookingItem> items = bookingItemRepository.findByBookingId(booking.getId());
+        for (BookingItem item : items) {
+            ticketCategoryRepository.releaseTickets(item.getTicketCategory().getId(), item.getQuantity());
+        }
+
+        // 2. Revert Voucher
+        if (booking.getVoucher() != null) {
+            Voucher voucher = booking.getVoucher();
+            voucherRepository.decrementUsedCount(voucher.getId());
+
+            VoucherRedemption redemption = voucherRedemptionRepository
+                    .findByBookingIdAndStatus(booking.getId(), VoucherRedemption.Status.APPLIED)
+                    .orElseThrow(() -> new BusinessException("Voucher redemption not found"));
+            redemption.setStatus(VoucherRedemption.Status.REVERTED);
+            redemption.setRevertedAt(LocalDateTime.now());
+            voucherRedemptionRepository.save(redemption);
+        }
+    }
 }

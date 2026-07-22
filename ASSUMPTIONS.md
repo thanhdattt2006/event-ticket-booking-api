@@ -22,6 +22,7 @@ forgotten that way).
 - [x] Phase 3: Voucher Seeding
 - [x] Phase 4: Customer Booking Flow
 - [x] Phase 5: Concurrency Integration Tests
+- [x] Phase 6: Booking Lifecycle — Expiry Cronjob + Revert
 
 ## Not Done (Out of scope, intentionally)
 

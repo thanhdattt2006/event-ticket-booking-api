@@ -116,16 +116,16 @@ grades most heavily)
 
 ## Phase 6: Booking Lifecycle — Expiry Cronjob + Revert
 
-- [ ] 6.1: Write a `@Scheduled` job that scans for expired bookings (atomic update,
+- [x] 6.1: Write a `@Scheduled` job that scans for expired bookings (atomic update,
       NOT SELECT-then-UPDATE, per AGENTS.md section 4)
-- [ ] 6.2: Implement the full revert logic (3 steps in one transaction, per AGENTS.md
+- [x] 6.2: Implement the full revert logic (3 steps in one transaction, per AGENTS.md
       section 2.4)
-- [ ] 6.3: `PATCH /api/bookings/{bookingCode}/cancel` — user self-cancels a booking
+- [x] 6.3: `PATCH /api/bookings/{bookingCode}/cancel` — user self-cancels a booking
       (triggers the same revert as the cronjob)
-- [ ] 6.4: `PATCH /api/bookings/{bookingCode}/confirm-payment` — simulate a payment
+- [x] 6.4: `PATCH /api/bookings/{bookingCode}/confirm-payment` — simulate a payment
       callback (PENDING/AWAITING_PAYMENT → PAID), atomic update to avoid racing with
       the cronjob
-- [ ] 6.5: Integration test: cronjob and confirm-payment racing at the same moment,
+- [x] 6.5: Integration test: cronjob and confirm-payment racing at the same moment,
       assert no double-processing occurs
 
 **Expected output:** the full 5-state booking lifecycle works correctly, and the race
